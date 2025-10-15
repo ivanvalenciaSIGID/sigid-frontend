@@ -1,5 +1,5 @@
 // URL del backend de Google Apps Script
-const scriptURL = 'https://script.google.com/macros/s/AKfycbwIFwd2wjfXGN-9zC-ppjyS0FXUPT-zXdAo23WHg1Jn4FqzGiL2AGanQxGs3WDg23jV2w/exec';
+const scriptURL = 'https://script.google.com/macros/s/AKfycbz8hPvMK5SEDni0j_kjbWCqLOSFEFigvoCkO8hXN9RVOrmkkmaPDkQhOKC1peAjeh4sFQ/exec';
 
 const form = document.getElementById('sigidForm');
 const estado = document.getElementById('estado');
