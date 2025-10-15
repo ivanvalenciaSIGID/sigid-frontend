@@ -1,30 +1,39 @@
-const BACKEND_URL = "https://script.google.com/macros/s/AKfycbz8hPvMK5SEDni0j_kjbWCqLOSFEFigvoCkO8hXN9RVOrmkkmaPDkQhOKC1peAjeh4sFQ/exec";
+// URL del backend de Google Apps Script (ya probado)
+const scriptURL = 'https://script.google.com/macros/s/AKfycbwIFwd2wjfXGN-9zC-ppjyS0FXUPT-zXdAo23WHg1Jn4FqzGiL2AGanQxGs3WDg23jV2w/exec';
 
-document.getElementById("incidenciaForm").addEventListener("submit", async (e) => {
+const form = document.getElementById('sigidForm');
+const estado = document.getElementById('estado');
+
+// Escuchar el envío del formulario
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
+  estado.textContent = "⏳ Enviando datos...";
+  estado.style.color = "#555";
 
-  const data = {
-    tipo: document.getElementById("tipo").value,
-    descripcion: document.getElementById("descripcion").value,
-    ubicacion: document.getElementById("ubicacion").value,
-  };
+  const formData = new FormData(form);
 
   try {
-    const response = await fetch(BACKEND_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+    const response = await fetch(scriptURL, {
+      method: 'POST',
+      body: formData,
+      mode: 'cors', // Importante para conexión segura
     });
 
-    const result = await response.json();
-    document.getElementById("mensaje").textContent = "✅ Datos enviados correctamente.";
-    console.log("Respuesta del servidor:", result);
+    if (!response.ok) throw new Error("Error de conexión");
 
-    // Limpia el formulario
-    document.getElementById("incidenciaForm").reset();
+    const result = await response.json();
+
+    if (result.status === 'success') {
+      estado.textContent = "✅ Datos enviados correctamente.";
+      estado.style.color = "green";
+      form.reset();
+    } else {
+      estado.textContent = "⚠️ Hubo un problema: " + (result.message || "Intenta nuevamente");
+      estado.style.color = "orange";
+    }
   } catch (error) {
     console.error("Error al enviar datos:", error);
-    document.getElementById("mensaje").textContent = "❌ Error al enviar los datos.";
+    estado.textContent = "❌ Error al enviar datos. Revisa la conexión o permisos.";
+    estado.style.color = "red";
   }
 });
-
