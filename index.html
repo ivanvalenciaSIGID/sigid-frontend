@@ -1,1 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIGID - Captura de Incidencias</title>
+  <link rel="stylesheet" href="styles/style.css" />
+</head>
+<body>
+  <h1>SIGID - Registro de Incidencia</h1>
+
+  <form id="incidenciaForm">
+    <label>Tipo de incidencia:</label>
+    <input type="text" id="tipo" name="tipo" required />
+
+    <label>Descripción:</label>
+    <textarea id="descripcion" name="descripcion" required></textarea>
+
+    <label>Ubicación (lat, lon):</label>
+    <input type="text" id="ubicacion" name="ubicacion" placeholder="Ejemplo: 19.2432, -103.7245" required />
+
+    <button type="submit">Enviar</button>
+  </form>
+
+  <p id="mensaje"></p>
+
+  <script src="scripts/app.js"></script>
+</body>
+</html>
 
