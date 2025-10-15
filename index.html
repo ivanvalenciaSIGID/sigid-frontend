@@ -8,13 +8,15 @@
 </head>
 <body>
   <main>
-    <h1>Formulario de Incidencias - SIGID</h1>
+    <h1>Registro de Incidencias - SIGID</h1>
 
     <form id="sigidForm">
-      <label for="nombre">Nombre:</label>
-      <input type="text" id="nombre" name="nombre" required />
+      <!-- Campo de fecha -->
+      <label for="fecha">Fecha:</label>
+      <input type="date" id="fecha" name="fecha" required />
 
-      <label for="tipo">Tipo de Incidencia:</label>
+      <!-- Campo de tipo -->
+      <label for="tipo">Tipo de incidencia:</label>
       <select id="tipo" name="tipo" required>
         <option value="">Seleccione una opción</option>
         <option value="Robo">Robo</option>
@@ -23,10 +25,11 @@
         <option value="Otro">Otro</option>
       </select>
 
-      <label for="descripcion">Descripción:</label>
-      <textarea id="descripcion" name="descripcion" required></textarea>
+      <!-- Campo de ubicación -->
+      <label for="ubicacion">Ubicación (coordenadas o dirección):</label>
+      <input type="text" id="ubicacion" name="ubicacion" placeholder="Ej. 19.2434, -103.7245" required />
 
-      <button type="submit">Enviar</button>
+      <button type="submit">Enviar registro</button>
     </form>
 
     <p id="estado" class="estado"></p>
