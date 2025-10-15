@@ -3,34 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SIGID - Captura de datos</title>
+  <title>Formulario SIGID</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>SIGID - Formulario de Captura</h1>
+  <main>
+    <h1>Formulario de Incidencias - SIGID</h1>
 
     <form id="sigidForm">
-      <label for="nombre">Nombre del reporte:</label>
+      <label for="nombre">Nombre:</label>
       <input type="text" id="nombre" name="nombre" required />
 
-      <label for="descripcion">Descripción:</label>
-      <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
-
-      <label for="categoria">Categoría:</label>
-      <select id="categoria" name="categoria" required>
-        <option value="">Selecciona una categoría</option>
-        <option value="robo">Robo</option>
-        <option value="asalto">Asalto</option>
-        <option value="vandalismo">Vandalismo</option>
-        <option value="otro">Otro</option>
+      <label for="tipo">Tipo de Incidencia:</label>
+      <select id="tipo" name="tipo" required>
+        <option value="">Seleccione una opción</option>
+        <option value="Robo">Robo</option>
+        <option value="Asalto">Asalto</option>
+        <option value="Vandalismo">Vandalismo</option>
+        <option value="Otro">Otro</option>
       </select>
+
+      <label for="descripcion">Descripción:</label>
+      <textarea id="descripcion" name="descripcion" required></textarea>
 
       <button type="submit">Enviar</button>
     </form>
 
-    <p id="mensaje"></p>
-  </div>
+    <p id="estado" class="estado"></p>
+  </main>
 
   <script src="app.js"></script>
 </body>
