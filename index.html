@@ -1,40 +1,127 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Formulario SIGID</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>SIGID - Captura de Incidencias con Mapa</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-sA+e2xM5PIJYhGIzgZhrg2fC9tm+RiH2vVV1vKp9A0M=" crossorigin=""/>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; }
+    label { display: block; margin-top: 10px; }
+    input, select, button { width: 100%; padding: 8px; margin-top: 5px; }
+    button { cursor: pointer; background-color: #007BFF; color: white; border: none; }
+    button:hover { background-color: #0056b3; }
+    #resultado { margin-top: 15px; white-space: pre-wrap; background: #f2f2f2; padding: 10px; border-radius: 5px; }
+    #map { height: 400px; margin-top: 10px; border: 1px solid #ccc; border-radius: 5px; }
+  </style>
 </head>
 <body>
-  <main>
-    <h1>Registro de Incidencias - SIGID</h1>
 
-    <form id="sigidForm">
-      <!-- Campo de fecha -->
-      <label for="fecha">Fecha:</label>
-      <input type="date" id="fecha" name="fecha" required />
+  <h1>SIGID - Captura de Incidencias</h1>
 
-      <!-- Campo de tipo -->
-      <label for="tipo">Tipo de incidencia:</label>
-      <select id="tipo" name="tipo" required>
-        <option value="">Seleccione una opción</option>
-        <option value="Robo">Robo</option>
-        <option value="Asalto">Asalto</option>
-        <option value="Vandalismo">Vandalismo</option>
-        <option value="Otro">Otro</option>
-      </select>
+  <form id="formIncidencia">
+    <label for="fecha">Fecha:</label>
+    <input type="datetime-local" id="fecha" required>
 
-      <!-- Campo de ubicación -->
-      <label for="ubicacion">Ubicación (coordenadas o dirección):</label>
-      <input type="text" id="ubicacion" name="ubicacion" placeholder="Ej. 19.2434, -103.7245" required />
+    <label for="tipo">Tipo de incidencia:</label>
+    <select id="tipo" required>
+      <option value="">--Selecciona--</option>
+      <option value="Robo">Robo</option>
+      <option value="Asalto">Asalto</option>
+      <option value="Vandalismo">Vandalismo</option>
+      <option value="Otro">Otro</option>
+    </select>
 
-      <button type="submit">Enviar registro</button>
-    </form>
+    <label>Ubicación en el mapa:</label>
+    <div id="map"></div>
+    <input type="hidden" id="lat">
+    <input type="hidden" id="lng">
 
-    <p id="estado" class="estado"></p>
-  </main>
+    <button type="submit">Enviar Incidencia</button>
+  </form>
 
-  <script src="app.js"></script>
+  <button id="btnTestGet">Probar Conexión GET</button>
+
+  <div id="resultado"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-o9N1j8Md5I4w8HkNkF2Ff9Oa1BntGiQF4+Y3t5J3bPo=" crossorigin=""></script>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbz8hPvMK5SEDni0j_kjbWCqLOSFEFigvoCkO8hXN9RVOrmkkmaPDkQhOKC1peAjeh4sFQ/exec'; // Cambia por tu ID
+    const resultadoDiv = document.getElementById('resultado');
+    const form = document.getElementById('formIncidencia');
+
+    // Inicializar mapa
+    const map = L.map('map').setView([19.2428, -103.7278], 13); // Colima centro aproximado
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    let marker = null;
+
+    map.on('click', function(e) {
+      const { lat, lng } = e.latlng;
+      if (marker) marker.setLatLng(e.latlng);
+      else marker = L.marker([lat, lng]).addTo(map);
+
+      document.getElementById('lat').value = lat;
+      document.getElementById('lng').value = lng;
+    });
+
+    // Función para enviar POST
+    async function sendDataPOST(fecha, tipo, lat, lng) {
+      try {
+        const payload = { fecha, tipo, lat, lng };
+
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        resultadoDiv.textContent = `✅ POST exitoso:\n${JSON.stringify(data, null, 2)}`;
+      } catch (error) {
+        resultadoDiv.textContent = `❌ Error POST:\n${error}`;
+      }
+    }
+
+    // Función GET
+    async function testGET() {
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        resultadoDiv.textContent = `✅ GET exitoso:\n${JSON.stringify(data, null, 2)}`;
+      } catch (error) {
+        resultadoDiv.textContent = `❌ Error GET:\n${error}`;
+      }
+    }
+
+    // Evento del formulario
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const fecha = document.getElementById('fecha').value;
+      const tipo = document.getElementById('tipo').value;
+      const lat = document.getElementById('lat').value;
+      const lng = document.getElementById('lng').value;
+
+      if (!fecha || !tipo || !lat || !lng) {
+        resultadoDiv.textContent = '❌ Todos los campos y la ubicación en el mapa son obligatorios.';
+        return;
+      }
+
+      sendDataPOST(fecha, tipo, lat, lng);
+      form.reset();
+      if (marker) { map.removeLayer(marker); marker = null; }
+    });
+
+    // Evento botón GET
+    document.getElementById('btnTestGet').addEventListener('click', testGET);
+  </script>
+
 </body>
 </html>
