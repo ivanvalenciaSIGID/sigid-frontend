@@ -1,10 +1,9 @@
-// URL del backend de Google Apps Script (ya probado)
+// URL del backend de Google Apps Script
 const scriptURL = 'https://script.google.com/macros/s/AKfycbwIFwd2wjfXGN-9zC-ppjyS0FXUPT-zXdAo23WHg1Jn4FqzGiL2AGanQxGs3WDg23jV2w/exec';
 
 const form = document.getElementById('sigidForm');
 const estado = document.getElementById('estado');
 
-// Escuchar el envío del formulario
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   estado.textContent = "⏳ Enviando datos...";
@@ -16,7 +15,7 @@ form.addEventListener('submit', async (e) => {
     const response = await fetch(scriptURL, {
       method: 'POST',
       body: formData,
-      mode: 'cors', // Importante para conexión segura
+      mode: 'cors',
     });
 
     if (!response.ok) throw new Error("Error de conexión");
@@ -24,7 +23,7 @@ form.addEventListener('submit', async (e) => {
     const result = await response.json();
 
     if (result.status === 'success') {
-      estado.textContent = "✅ Datos enviados correctamente.";
+      estado.textContent = "✅ Registro guardado correctamente.";
       estado.style.color = "green";
       form.reset();
     } else {
